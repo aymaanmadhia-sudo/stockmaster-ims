@@ -1,169 +1,318 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StockMaster </title>
+  <title>StockMaster — Inventory MVP</title>
 
   <!-- External CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">SM</div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="mark">SM</div>
         <div>
           <h1>StockMaster</h1>
-         
+          <div class="small">Inventory MVP</div>
         </div>
       </div>
-      <div class="cta">
-        <button class="btn" id="seedBtn">Seed Demo</button>
-        <button class="btn ghost" id="guideBtn">How to present</button>
+
+      <nav>
+        <div class="nav-item active" data-view="dashboard">📊 Dashboard</div>
+        <div class="nav-item" data-view="products">📦 Products</div>
+        <div class="nav-item" data-view="receipts">📥 Receipts</div>
+        <div class="nav-item" data-view="deliveries">📤 Deliveries</div>
+        <div class="nav-item" data-view="transfers">🔁 Transfers</div>
+        <div class="nav-item" data-view="adjustments">⚠️ Adjustments</div>
+        <div class="nav-item" data-view="ledger">🧾 Ledger</div>
+        <div class="nav-item" data-view="settings">⚙️ Settings</div>
+      </nav>
+
+      <div style="margin-top:18px">
+        <div class="small">Quick Links</div>
+        <a class="tag" href="/mnt/data/StockMaster.pdf" target="_blank"
+          style="display:inline-block;margin-top:8px;text-decoration:none;color:inherit">📎 View Spec (PDF)</a>
       </div>
-    </header>
+    </aside>
 
-    <div class="layout">
-      <aside>
-        <div class="panel sidebar">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div style="font-weight:700">Navigation</div>
-            <div class="badge">Beginners</div>
-          </div>
-          <div class="menu">
-            <button class="active" data-view="dashboard">📊 Dashboard</button>
-            <button data-view="products">📦 Products</button>
-            <button data-view="receipts">📥 Receipts</button>
-            <button data-view="deliveries">📤 Deliveries</button>
-            <button data-view="ledger">🧾 Ledger</button>
-            <button data-view="help">❓ Tips</button>
-          </div>
-
-          <div style="margin-top:12px" class="hint">
-            Tip: Use <strong>Seed Demo</strong> to prefill data and try flows immediately.
-            All data uses your browser storage — nothing is uploaded.
-          </div>
-
-          <div style="margin-top:12px">
-            <a class="badge" href="/mnt/data/StockMaster.pdf" target="_blank" style="text-decoration:none;color:inherit">
-              📎 View Spec (PDF)
-            </a>
-          </div>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div style="font-size:20px;font-weight:700">Inventory Dashboard</div>
+          <div class="small" id="subTitle">A simple, clear inventory MVP — live demo data</div>
         </div>
-      </aside>
+        <div class="search">
+          <input id="globalSearch" placeholder="Search SKU, name, category..." />
+          <button class="btn" id="openSeed">Seed Demo</button>
+        </div>
+      </div>
 
-      <main>
-        <div id="dashboard" class="panel">
-          <div class="top-row">
-            <div>
-              
-              <div class="steps" style="margin-top:10px">
-                <div id="s1" class="step">1. Add Product</div>
-                <div id="s2" class="step">2. Receive</div>
-                <div id="s3" class="step">3. Deliver</div>
-              </div>
-            
-           
-          
-
+      <section id="viewArea">
+        <!-- Dashboard -->
+        <div class="view" id="dashboard">
           <div class="kpis">
-            <div class="kpi"><h3>Total Products</h3><p id="k_total_products">0</p></div>
-            <div class="kpi"><h3>Total Stock</h3><p id="k_total_stock">0</p></div>
-            <div class="kpi"><h3>Low Stock</h3><p id="k_low_stock">0</p></div>
-            <div class="kpi"><h3>Recent Actions</h3><p id="k_actions">0</p></div>
+            <div class="kpi">
+              <h3>Total Products</h3>
+              <p id="k_total_products">0</p>
+            </div>
+            <div class="kpi">
+              <h3>Total Stock (units)</h3>
+              <p id="k_total_stock">0</p>
+            </div>
+            <div class="kpi">
+              <h3>Low / Out of stock</h3>
+              <p id="k_low_stock">0</p>
+            </div>
+            <div class="kpi">
+              <h3>Pending Receipts</h3>
+              <p id="k_pending_receipts">0</p>
+            </div>
           </div>
 
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div style="flex:2">
-              <div style="font-weight:700;margin-bottom:8px">Products Snapshot</div>
-              <div class="cards" id="productCards"></div>
-            </div>
-            <div style="flex:1">
-              <div style="font-weight:700;margin-bottom:8px">Quick Actions</div>
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <button class="btn" onclick="openPanel('products')">+ Add Product</button>
-                <button class="btn ghost" onclick="openPanel('receipts')">Create Receipt</button>
-                <button class="btn ghost" onclick="openPanel('deliveries')">Create Delivery</button>
+          <div class="grid-2">
+            <div>
+              <div class="panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font-weight:700">Stock Overview</div>
+                  <div class="small">Filter by warehouse / category</div>
+                </div>
+                <div id="productCards" class="cards"></div>
               </div>
 
-             
+              <div style="margin-top:12px" class="panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font-weight:700">Recent Ledger</div>
+                  <div class="small">Latest operations</div>
+                </div>
+                <table id="recentLedger">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Type</th>
+                      <th>Product</th>
+                      <th>Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <div>
+              <div class="panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font-weight:700">Quick Actions</div>
+                  <div class="small">Fast create & operate</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <button class="btn" onclick="ui.openForm('product')">+ Add Product</button>
+                  <button class="btn ghost" onclick="showView('receipts')">Create Receipt</button>
+                  <button class="btn ghost" onclick="showView('deliveries')">Create Delivery</button>
+                </div>
+              </div>
+
+              <div style="margin-top:12px" class="panel">
+                <div style="font-weight:700;margin-bottom:8px">Insights</div>
+                <div class="small">Auto suggestions</div>
+                <ul id="insights" style="margin-top:8px"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div class="view" id="products" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Products</div>
+            <div>
+              <button class="btn" onclick="ui.openForm('product')">+ New Product</button>
             </div>
           </div>
 
-          <div style="margin-top:12px">
-            <div style="font-weight:700;margin-bottom:8px">Recent Ledger</div>
-            <table id="recentLedger"><thead><tr><th>Time</th><th>Type</th><th>Product</th><th>Qty</th></tr></thead><tbody></tbody></table>
+          <div class="panel">
+            <table id="productsTable">
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Products panel -->
-        <div id="products" class="panel" style="display:none;margin-top:12px">
+        <!-- Receipts -->
+        <div class="view" id="receipts" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Receipts (Incoming)</div>
+            <div>
+              <button class="btn" onclick="ui.openForm('receipt')">+ New Receipt</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <table id="receiptsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Supplier</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Deliveries -->
+        <div class="view" id="deliveries" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Deliveries (Outgoing)</div>
+            <div>
+              <button class="btn" onclick="ui.openForm('delivery')">+ New Delivery</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <table id="deliveriesTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Transfers -->
+        <div class="view" id="transfers" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Internal Transfers</div>
+            <div>
+              <button class="btn" onclick="ui.openForm('transfer')">+ Transfer</button>
+            </div>
+          </div>
+          <div class="panel">
+            <table id="transfersTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Items</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Adjustments -->
+        <div class="view" id="adjustments" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Stock Adjustments</div>
+            <div>
+              <button class="btn" onclick="ui.openForm('adjustment')">+ Adjust</button>
+            </div>
+          </div>
+          <div class="panel">
+            <table id="adjustmentsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>Location</th>
+                  <th>Counted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ledger -->
+        <div class="view" id="ledger" style="display:none">
+          <div style="font-weight:700;margin-bottom:12px">Move History / Ledger</div>
+          <div class="panel">
+            <table id="ledgerTable">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>SKU</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Ref</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="view" id="settings" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700">Settings</div>
+            <div class="small">Manage warehouses & categories</div>
+          </div>
+          <div class="panel">
+            <div style="display:flex;gap:12px">
+              <div style="flex:1">
+                <div class="small" style="margin-bottom:6px">Warehouses</div>
+                <div id="warehousesList"></div>
+                <div style="margin-top:8px;display:flex;gap:8px"><input id="newWarehouse" class="input"
+                    placeholder="New warehouse name" /><button class="btn" onclick="actions.addWarehouse()">Add</button>
+                </div>
+              </div>
+              <div style="flex:1">
+                <div class="small" style="margin-bottom:6px">Product categories</div>
+                <div id="categoriesList"></div>
+                <div style="margin-top:8px;display:flex;gap:8px"><input id="newCategory" class="input"
+                    placeholder="New category" /><button class="btn" onclick="actions.addCategory()">Add</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- modal area for forms -->
+      <div id="modal"
+        style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);padding:20px">
+        <div
+          style="width:880px;max-width:98%;background:#031026;padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div style="font-weight:700">Products</div>
-            <div class="small">Simple fields — keep it minimal</div>
+            <div id="modalTitle" style="font-weight:700"></div>
+            <div><button class="btn ghost" onclick="ui.closeModal()">Close</button></div>
           </div>
-          <div style="display:flex;gap:8px;margin-bottom:8px">
-            <input id="p_sku" placeholder="SKU e.g. PRD-001" />
-            <input id="p_name" placeholder="Name e.g. Steel Rod" />
-            <input id="p_cat" placeholder="Category" />
-            <button class="btn" onclick="addProduct()">Add</button>
-          </div>
-
-          <div id="productsTableWrap">
-            <table id="productsTable"><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Stock</th></tr></thead><tbody></tbody></table>
-          </div>
+          <div id="modalBody"></div>
         </div>
+      </div>
 
-        <!-- Receipts panel -->
-        <div id="receipts" class="panel" style="display:none;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-weight:700">Create Receipt</div>
-            <div class="small">Incoming stock — increases inventory</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <select id="r_prod"></select>
-            <input id="r_qty" placeholder="Qty" type="number" />
-            <input id="r_supplier" placeholder="Supplier (optional)" />
-            <button class="btn" onclick="createReceipt()">Receive</button>
-          </div>
-          <div style="margin-top:10px">
-            <table id="receiptsTable"><thead><tr><th>ID</th><th>Supplier</th><th>Items</th></tr></thead><tbody></tbody></table>
-          </div>
-        </div>
-
-        <!-- Deliveries panel -->
-        <div id="deliveries" class="panel" style="display:none;margin-top:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-weight:700">Create Delivery</div>
-            <div class="small">Outgoing stock — decreases inventory</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <select id="d_prod"></select>
-            <input id="d_qty" placeholder="Qty" type="number" />
-            <button class="btn" onclick="createDelivery()">Deliver</button>
-          </div>
-          <div style="margin-top:10px">
-            <table id="deliveriesTable"><thead><tr><th>ID</th><th>Items</th></tr></thead><tbody></tbody></table>
-          </div>
-        </div>
-
-        <!-- Ledger panel -->
-        <div id="ledger" class="panel" style="display:none;margin-top:12px">
-          <div style="font-weight:700;margin-bottom:8px">Ledger / Move History</div>
-          <table id="ledgerTable"><thead><tr><th>Time</th><th>Type</th><th>SKU</th><th>Product</th><th>Qty</th></tr></thead><tbody></tbody></table>
-        </div>
-
-        
-       
-      </main>
-    </div>
-
-    <footer style="text-align:center;margin-top:12px;color:var(--muted)">StockMaster — beginner-friendly </footer>
+    </main>
   </div>
 
   <!-- External JS -->
   <script src="script.js"></script>
 </body>
-</html>
 
+</html>
