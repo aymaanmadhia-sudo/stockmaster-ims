@@ -114,4 +114,22 @@ renderAll(); openPanel('dashboard');
 
 // expose for tinkering
 window._db = db; window.seedDemo = seedDemo; window.downloadHTML = downloadHTML; window.addProduct = addProduct; window.createReceipt = createReceipt; window.createDelivery = createDelivery; window.openPanel = openPanel;
+async function sendToBackend(data) {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        console.log("Backend response:", result);
+        alert("Backend says: " + result.message);
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
 
