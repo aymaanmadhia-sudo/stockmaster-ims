@@ -3,7 +3,6 @@ from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, User, Product, Movement, Alert
-from ai_engine import run_ai_checks
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -153,6 +152,7 @@ def get_alerts():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
