@@ -1,5 +1,11 @@
 from flask import Flask, render_template, request,jsonify
 from flask_cors import CORS
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Base, User, Product, Movement, Alert
+from ai_engine import run_ai_checks
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 app = Flask(__name__)
@@ -20,14 +26,6 @@ def api():
 
 if __name__ == '__main__':
     app.run(debug=True)
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import Base, User, Product, Movement, Alert
-from ai_engine import run_ai_checks
-from werkzeug.security import generate_password_hash, check_password_hash
-
 app = Flask(__name__)
 CORS(app)
 
@@ -155,5 +153,6 @@ def get_alerts():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
