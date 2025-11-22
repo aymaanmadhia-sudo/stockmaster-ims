@@ -1,2 +1,2 @@
 # stockmaster-ims
-Inventory Management System foe hackthon
+Inventory Management System for hackthon
