@@ -1,10 +1,22 @@
 from flask import Flask, render_template, request
+from flask_cors import CORS
+from flask import request,jsonify
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
     return "Backend Running Successfully!"
+    
+
+@app.route('/api', methods=['POST'])
+def api():
+    data = request.get_json()
+    print("Data received from frontend:", data)
+
+    return jsonify({"message": "Backend received your data!"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -143,3 +155,4 @@ def get_alerts():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
