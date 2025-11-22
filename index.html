@@ -1,1 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StockMaster — Hackathon Friendly (Beginner)</title>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">SM</div>
+        <div>
+          <h1>StockMaster</h1>
+          <div class="tagline">Hackathon-friendly • Beginner steps with guidance ✨</div>
+        </div>
+      </div>
+      <div class="cta">
+        <button class="btn" id="seedBtn">Seed Demo</button>
+        <button class="btn ghost" id="guideBtn">How to present</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside>
+        <div class="panel sidebar">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-weight:700">Navigation</div>
+            <div class="badge">Beginners</div>
+          </div>
+          <div class="menu">
+            <button class="active" data-view="dashboard">📊 Dashboard</button>
+            <button data-view="products">📦 Products</button>
+            <button data-view="receipts">📥 Receipts</button>
+            <button data-view="deliveries">📤 Deliveries</button>
+            <button data-view="ledger">🧾 Ledger</button>
+            <button data-view="help">❓ Tips</button>
+          </div>
+
+          <div style="margin-top:12px" class="hint">
+            Tip: Use <strong>Seed Demo</strong> to prefill data and try flows immediately.
+            All data uses your browser storage — nothing is uploaded.
+          </div>
+
+          <div style="margin-top:12px">
+            <a class="badge" href="/mnt/data/StockMaster.pdf" target="_blank" style="text-decoration:none;color:inherit">
+              📎 View Spec (PDF)
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <div id="dashboard" class="panel">
+          <div class="top-row">
+            <div>
+              <div style="font-size:18px;font-weight:700">Welcome, Hackathon Beginner 👋</div>
+              <div class="hint">Follow the 3 simple steps below to build your demo</div>
+              <div class="steps" style="margin-top:10px">
+                <div id="s1" class="step">1. Add Product</div>
+                <div id="s2" class="step">2. Receive</div>
+                <div id="s3" class="step">3. Deliver</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="badge pulse">Hackathon MVP</div>
+              <div class="hint" style="margin-top:6px">Demo-ready in minutes</div>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi"><h3>Total Products</h3><p id="k_total_products">0</p></div>
+            <div class="kpi"><h3>Total Stock</h3><p id="k_total_stock">0</p></div>
+            <div class="kpi"><h3>Low Stock</h3><p id="k_low_stock">0</p></div>
+            <div class="kpi"><h3>Recent Actions</h3><p id="k_actions">0</p></div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="flex:2">
+              <div style="font-weight:700;margin-bottom:8px">Products Snapshot</div>
+              <div class="cards" id="productCards"></div>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:700;margin-bottom:8px">Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn" onclick="openPanel('products')">+ Add Product</button>
+                <button class="btn ghost" onclick="openPanel('receipts')">Create Receipt</button>
+                <button class="btn ghost" onclick="openPanel('deliveries')">Create Delivery</button>
+              </div>
+
+              <div style="margin-top:12px" class="help">
+                <div style="font-weight:700">Hackathon Tip</div>
+                <div class="small">Record a 1–2 minute demo showing: Dashboard → Receive → Deliver. Judges like a working flow more than lots of features.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="font-weight:700;margin-bottom:8px">Recent Ledger</div>
+            <table id="recentLedger"><thead><tr><th>Time</th><th>Type</th><th>Product</th><th>Qty</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Products panel -->
+        <div id="products" class="panel" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-weight:700">Products</div>
+            <div class="small">Simple fields — keep it minimal</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="p_sku" placeholder="SKU e.g. PRD-001" />
+            <input id="p_name" placeholder="Name e.g. Steel Rod" />
+            <input id="p_cat" placeholder="Category" />
+            <button class="btn" onclick="addProduct()">Add</button>
+          </div>
+
+          <div id="productsTableWrap">
+            <table id="productsTable"><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Stock</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Receipts panel -->
+        <div id="receipts" class="panel" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Create Receipt</div>
+            <div class="small">Incoming stock — increases inventory</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <select id="r_prod"></select>
+            <input id="r_qty" placeholder="Qty" type="number" />
+            <input id="r_supplier" placeholder="Supplier (optional)" />
+            <button class="btn" onclick="createReceipt()">Receive</button>
+          </div>
+          <div style="margin-top:10px">
+            <table id="receiptsTable"><thead><tr><th>ID</th><th>Supplier</th><th>Items</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Deliveries panel -->
+        <div id="deliveries" class="panel" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Create Delivery</div>
+            <div class="small">Outgoing stock — decreases inventory</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <select id="d_prod"></select>
+            <input id="d_qty" placeholder="Qty" type="number" />
+            <button class="btn" onclick="createDelivery()">Deliver</button>
+          </div>
+          <div style="margin-top:10px">
+            <table id="deliveriesTable"><thead><tr><th>ID</th><th>Items</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Ledger panel -->
+        <div id="ledger" class="panel" style="display:none;margin-top:12px">
+          <div style="font-weight:700;margin-bottom:8px">Ledger / Move History</div>
+          <table id="ledgerTable"><thead><tr><th>Time</th><th>Type</th><th>SKU</th><th>Product</th><th>Qty</th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <!-- Help panel -->
+        <div id="help" class="panel" style="display:none;margin-top:12px">
+          <div style="font-weight:700">Tips for first-time hackathon students</div>
+          <ol style="margin-top:8px">
+            <li>Keep the scope tiny: one working feature (receive → deliver) is enough.</li>
+            <li>Make your demo repeatable: seed data and run the same steps twice.</li>
+            <li>Explain the problem, show the working flow, and share next steps.</li>
+            <li>Use this app as the 'backend demo' while you present UI + code on slides.</li>
+          </ol>
+          <div style="margin-top:10px"><button class="btn" onclick="downloadHTML()">Download this HTML</button></div>
+        </div>
+
+      </main>
+    </div>
+
+    <footer style="text-align:center;margin-top:12px;color:var(--muted)">StockMaster — beginner-friendly hackathon UI • Data is local to this browser</footer>
+  </div>
+
+  <!-- External JS -->
+  <script src="script.js"></script>
+</body>
+</html>
 
